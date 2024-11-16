@@ -1,27 +1,27 @@
+
+#!/usr/bin/env bash
+
+SCRIPT_COUNT=1
+APT="apt-get"
+
 function f_aptget {
   echo "[$SCRIPT_COUNT] Updating the package index files from their sources"
-
   $APT update
-
   ((SCRIPT_COUNT++))
 
   echo "[$SCRIPT_COUNT] Upgrading installed packages"
-
   $APT -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" --with-new-pkgs upgrade
-
   ((SCRIPT_COUNT++))
 }
 
 function f_aptget_clean {
   echo "[$SCRIPT_COUNT] Removing unused packages"
-
   apt-get -qq clean
   apt-get -qq autoremove
 
   for deb_clean in $(dpkg -l | grep '^rc' | awk '{print $2}'); do
     $APT purge "$deb_clean"
   done
-
   ((SCRIPT_COUNT++))
 }
 
@@ -29,13 +29,13 @@ function f_aptget_configure {
   echo "[$SCRIPT_COUNT] Configure APT"
 
   if ! grep '^Acquire::http::AllowRedirect' /etc/apt/apt.conf.d/* ; then
-    echo 'Acquire::http::AllowRedirect "false";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'Acquire::http::AllowRedirect "false";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*Acquire::http::AllowRedirect.*/Acquire::http::AllowRedirect "false";/g' "$(grep -l 'Acquire::http::AllowRedirect' /etc/apt/apt.conf.d/*)"
   fi
 
   if ! grep '^APT::Get::AllowUnauthenticated' /etc/apt/apt.conf.d/* ; then
-    echo 'APT::Get::AllowUnauthenticated "false";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'APT::Get::AllowUnauthenticated "false";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*APT::Get::AllowUnauthenticated.*/APT::Get::AllowUnauthenticated "false";/g' "$(grep -l 'APT::Get::AllowUnauthenticated' /etc/apt/apt.conf.d/*)"
   fi
@@ -47,19 +47,19 @@ function f_aptget_configure {
   fi
 
   if ! grep '^APT::Install-Recommends' /etc/apt/apt.conf.d/*; then
-    echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'APT::Install-Recommends "false";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*APT::Install-Recommends.*/APT::Install-Recommends "false";/g' "$(grep -l 'APT::Install-Recommends' /etc/apt/apt.conf.d/*)"
   fi
 
   if ! grep '^APT::Get::AutomaticRemove' /etc/apt/apt.conf.d/*; then
-    echo 'APT::Get::AutomaticRemove "true";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'APT::Get::AutomaticRemove "true";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*APT::Get::AutomaticRemove.*/APT::Get::AutomaticRemove "true";/g' "$(grep -l 'APT::Get::AutomaticRemove' /etc/apt/apt.conf.d/*)"
   fi
 
   if ! grep '^APT::Install-Suggests' /etc/apt/apt.conf.d/*; then
-    echo 'APT::Install-Suggests "false";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'APT::Install-Suggests "false";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*APT::Install-Suggests.*/APT::Install-Suggests "false";/g' "$(grep -l 'APT::Install-Suggests' /etc/apt/apt.conf.d/*)"
   fi
@@ -77,19 +77,19 @@ function f_aptget_configure {
   fi
 
   if ! grep '^Acquire::AllowDowngradeToInsecureRepositories' /etc/apt/apt.conf.d/*; then
-    echo 'Acquire::AllowDowngradeToInsecureRepositories "false";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'Acquire::AllowDowngradeToInsecureRepositories "false";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*Acquire::AllowDowngradeToInsecureRepositories.*/Acquire::AllowDowngradeToInsecureRepositories "false";/g' "$(grep -l 'Acquire::AllowDowngradeToInsecureRepositories' /etc/apt/apt.conf.d/*)"
   fi
 
   if ! grep '^Acquire::AllowInsecureRepositories' /etc/apt/apt.conf.d/*; then
-    echo 'Acquire::AllowInsecureRepositories "false";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'Acquire::AllowInsecureRepositories "false";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*Acquire::AllowInsecureRepositories.*/Acquire::AllowInsecureRepositories "false";/g' "$(grep -l 'Acquire::AllowInsecureRepositories' /etc/apt/apt.conf.d/*)"
   fi
 
   if ! grep '^APT::Sandbox::Seccomp' /etc/apt/apt.conf.d/*; then
-    echo 'APT::Sandbox::Seccomp "1";' >> /etc/apt/apt.conf.d/98-hardening-ubuntu
+    echo 'APT::Sandbox::Seccomp "1";' >> /etc/apt/apt.conf.d/98-hardening-mint
   else
     sed -i 's/.*APT::Sandbox::Seccomp.*/APT::Sandbox::Seccomp "1";/g' "$(grep -l 'APT::Sandbox::Seccomp' /etc/apt/apt.conf.d/*)"
   fi
@@ -111,3 +111,13 @@ function f_aptget_noexec {
 
   ((SCRIPT_COUNT++))
 }
+
+# Call the functions
+#f_aptget
+#f_aptget_clean
+#f_aptget_configure
+#f_aptget_noexec
+
+#echo "Script execution completed."
+```
+
