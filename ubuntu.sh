@@ -124,7 +124,7 @@ function main {
   readonly VERBOSE
   readonly WBIN
 
-  for s in ./scripts/*; do
+  for s in ./mint/*; do
     [[ -f $s ]] || break
 
     source "$s"
